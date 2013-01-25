@@ -1,0 +1,17 @@
+{
+  "name": "Total Anarchy Intercept Proxy",
+
+  "description": "An Intercept proxy packaged application powered by Node",
+
+  "version": "0.1",
+
+  "manifest_version": 2,
+  
+  "app": {
+	"background": {
+	  "scripts": ["background.js"]
+	}
+  },
+  
+  "icons": { "256": "img/TotalAnarchy256.png"}
+}
