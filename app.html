@@ -2,6 +2,7 @@
 <html data-ng-app="totalAnarchy" ng-csp="">
   <head>
   	<meta charset="utf-8" />
+  	<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
   	<script src="js/jquery.min.js"></script>
   	<script src="js/bootstrap.min.js"></script>
   	<script src="js/angular.min.js"></script>
@@ -12,7 +13,17 @@
   </head>
   <body>
   	<title>Total Anarchy Intercept Proxy</title>
-    <div data-ng-controller="loadCtrl">And it begins...{{test}}</div>
- 	
+    <div data-ng-controller="loadCtrl"></div>
+ 	<div class="navbar" bs-navbar>
+	  <div class="navbar-inner">
+	    <a class="brand" href="#">Title</a>
+	    <ul class="nav">
+	      <!-- You can use regular expressions -->
+	      <li data-match-route="/(:?navbar)"><a href="#/navbar">Home</a></li>
+	      <li data-match-route="/page-one"><a href="#/page-one">Page One</a></li>
+	      <li data-match-route="/page-two.*"><a href="#/page-two/sub-a">Page Two</a></li>
+	    </ul>
+	  </div>
+	</div>
   </body>
 </html>
