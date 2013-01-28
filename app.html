@@ -14,17 +14,18 @@
 	<base target="_blank">
   </head>
   <body>
- 	<div class="navbar" bs-navbar>
+ 	<div data-ng-controller="serverCtrl" class="navbar" bs-navbar>
 	  <div class="navbar-inner">
-	    <a class="brand" href="#">Total Anarchy</a>
+	    <a class="brand" href="">Total Anarchy</a>
 	    <ul class="nav">
 	      <!-- You can use regular expressions -->
+	      <li data-ng-click="listen()"><a href="">{{serverstate}}</a></li>
 	      <li data-match-route="/(:?navbar)"><a href="#/navbar">Intercept</a></li>
 	      <li data-match-route="/page-one"><a href="#/page-one">History</a></li>
 	      <li data-match-route="/page-two.*"><a href="#/page-two/sub-a">Intruder</a></li>
 	    </ul>
 	  </div>
 	</div>
-	<div data-ng-controller="serverCtrl">{{request}}</div>
+	<div></div>
   </body>
 </html>
