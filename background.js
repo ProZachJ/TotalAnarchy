@@ -5,3 +5,4 @@ chrome.app.runtime.onLaunched.addListener(function() {
     type: 'shell'
   });
 });
+
