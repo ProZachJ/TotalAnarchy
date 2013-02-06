@@ -1,8 +1,7 @@
-App.factory('server', function($rootScope){
+App.factory('server', function($rootScope, socket){
     //need to add helper functions for dealing with responses etc maybe should be another service.
-  var socket = chrome.experimental.socket || chrome.socket;
   var socketInfo;
-  var data = '';
+  $rootScope.data = [];
 
   var stringToUint8Array = function(string) {
     var buffer = new ArrayBuffer(string.length);
@@ -22,32 +21,45 @@ App.factory('server', function($rootScope){
   return str;
   };
 
+  var server = {
 
-  var onAccept = function(acceptInfo) {
-    console.log("ACCEPT", acceptInfo);
-    //  Read in the data
-    socket.read(acceptInfo.socketId, function(readInfo) {
-      console.log("READ", readInfo);
-      // Parse the request.
-      data = arrayBufferToString(readInfo.data);
-      //parse data
-      console.log(data);
-      //send response
-      var header = stringToUint8Array("HTTP/1.0 200 OK"+
-        "\nContent-length:5 \nContent-type:text/html \n\ntest1");
-      var outputBuffer = new ArrayBuffer(header.byteLength);
-      var view = new Uint8Array(outputBuffer);
-      view.set(header, 0);
-      socket.write(acceptInfo.socketId, outputBuffer, function(writeInfo) {
-       console.log("WRITE", writeInfo);
-       socket.destroy(acceptInfo.socketId);
-       socket.accept(socketInfo.socketId, onAccept);
+    sendResponse: function (acceptInfo){
+    var header = stringToUint8Array("HTTP/1.0 200 OK"+
+          "\nContent-length:5 \nContent-type:text/html \n\ntest1");
+        var outputBuffer = new ArrayBuffer(header.byteLength);
+        var view = new Uint8Array(outputBuffer);
+        view.set(header, 0);
+        socket.write(acceptInfo.socketId, outputBuffer, function(writeInfo) {
+         console.log("WRITE", writeInfo);
+         socket.destroy(acceptInfo.socketId);
+         $rootScope.data = [];
+         if(!$rootScope.$$phase) { //this is used to prevent an overlap of scope digestion
+          $rootScope.$apply(); //this will kickstart angular to recognize the change
+        }
+         socket.accept(socketInfo.socketId, server.onAccept);
+        });
+    },
+
+    onAccept: function(acceptInfo) {
+      $rootScope.acceptInfo = acceptInfo;
+      console.log("ACCEPT", acceptInfo);
+      //  Read in the data
+      socket.read(acceptInfo.socketId, function(readInfo) {
+        console.log("READ", readInfo);
+        // Parse the request.
+        
+        var request = arrayBufferToString(readInfo.data);
+        $rootScope.data = request;
+        //parse data
+        console.log($rootScope.data);
+        
+        if(!$rootScope.$$phase) { //this is used to prevent an overlap of scope digestion
+          $rootScope.$apply(); //this will kickstart angular to recognize the change
+        }
+        
+
+        //send response
       });
-    });
-  };
-  return {
-    request: function(){
-      return data;
     },
     
     start: function() {
@@ -55,13 +67,15 @@ App.factory('server', function($rootScope){
         socketInfo = _socketInfo;
         socket.listen(socketInfo.socketId, '127.0.0.1', 8080, 20, function(result) {
           console.log("LISTENING:", result);
-          socket.accept(socketInfo.socketId, onAccept);
+          socket.accept(socketInfo.socketId, server.onAccept);
         });
       });
     },
+
     stop: function() {
       socket.destroy(socketInfo.socketId);
       console.log("Stop");
     }
   };
+  return server;
 });

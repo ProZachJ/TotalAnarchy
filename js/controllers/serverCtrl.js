@@ -1,5 +1,6 @@
-function serverCtrl($scope, server){
+var serverCtrl = function($scope, server, socket){
 	$scope.serverstate = 'Not Listening';
+
 
 	$scope.listen = function (){
 		if ($scope.serverstate === 'Not Listening'){
@@ -11,5 +12,12 @@ function serverCtrl($scope, server){
 			$scope.serverstate = 'Not Listening';
 		}
 	};
-	$scope.request = server.request();
-}
+
+	$scope.sendResponse =  function(){
+		if ($scope.data.length > 0){
+			server.sendResponse($scope.acceptInfo);
+		}
+	};
+	
+};
+serverCtrl.$inject = ['$scope', 'server', 'socket'];

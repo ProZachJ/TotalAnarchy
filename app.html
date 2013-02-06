@@ -16,7 +16,6 @@
   <body>
  	<div data-ng-controller="serverCtrl" class="navbar" bs-navbar>
 	  <div class="navbar-inner">
-	    <a class="brand" href="">Total Anarchy</a>
 	    <ul class="nav">
 	      <!-- You can use regular expressions -->
 	      <li data-ng-click="listen()"><a href="">{{serverstate}}</a></li>
@@ -25,7 +24,7 @@
 	      <li data-match-route="/page-two.*"><a href="#/page-two/sub-a">Intruder</a></li>
 	    </ul>
 	  </div>
-	</div>
-	<div></div>
+	  <div ng-click="sendResponse()">{{data}}</div>
+	</div>	
   </body>
 </html>
