@@ -2,24 +2,6 @@ App.factory('server', function($rootScope, socket){
   'use strict';
   var socketInfo;
 
-  var stringToUint8Array = function(string) {
-    var buffer = new ArrayBuffer(string.length);
-    var view = new Uint8Array(buffer);
-    for(var i = 0; i < string.length; i++) {
-      view[i] = string.charCodeAt(i);
-    }
-    return view;
-  };
-
-  var arrayBufferToString = function(buffer) {
-    var str = '';
-    var uArrayVal = new Uint8Array(buffer);
-    for(var s = 0; s < uArrayVal.length; s++) {
-      str += String.fromCharCode(uArrayVal[s]);
-    }
-    return str;
-  };
-
   var server = {
     
     data: [],
@@ -27,7 +9,7 @@ App.factory('server', function($rootScope, socket){
     acceptInfo: {},
 
     sendResponse: function (){
-      var header = stringToUint8Array("HTTP/1.0 200 OK"+
+      var header = $rootScope.stringToUint8Array("HTTP/1.0 200 OK"+
           "\nContent-length:5 \nContent-type:text/html \n\ntest1");
       var outputBuffer = new ArrayBuffer(header.byteLength);
       var view = new Uint8Array(outputBuffer);
@@ -46,7 +28,7 @@ App.factory('server', function($rootScope, socket){
       socket.read(server.acceptInfo.socketId, function(readInfo) {
         console.log("READ", readInfo);
         // Parse the request.
-        var request = arrayBufferToString(readInfo.data);
+        var request = $rootScope.arrayBufferToString(readInfo.data);
         console.log(request);
         $rootScope.$broadcast( 'Server.request', request );
         //parse data
