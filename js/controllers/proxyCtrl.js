@@ -17,7 +17,7 @@ App.controller('proxyCtrl', ['$scope', 'socket', 'proxy', function($scope, socke
 		}
 	};
 
-	$scope.sendResponse =  function(){
+	$scope.submitRequest =  function (){
 		if ($scope.data.length > 0){
 			proxy.sendResponse();
 			$scope.data = [];
