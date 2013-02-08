@@ -1,5 +1,5 @@
 App.factory('server', function($rootScope, socket){
-    //need to add helper functions for dealing with responses etc maybe should be another service.
+  'use strict';
   var socketInfo;
 
   var stringToUint8Array = function(string) {

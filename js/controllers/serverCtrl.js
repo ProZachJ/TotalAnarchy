@@ -1,4 +1,5 @@
-var serverCtrl = function($scope, server, socket){
+App.controller('serverCtrl', ['$scope', 'socket', 'server', function($scope, socket, server){
+	'use strict';
 	$scope.serverstate = 'Not Listening';
 	$scope.data = server.data;
 
@@ -29,6 +30,4 @@ var serverCtrl = function($scope, server, socket){
 			$scope.$apply();
 		}
 	});
-};
-
-serverCtrl.$inject = ['$scope', 'server', 'socket'];
+}]);
