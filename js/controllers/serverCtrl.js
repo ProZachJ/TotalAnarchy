@@ -16,14 +16,13 @@ var serverCtrl = function($scope, server, socket){
 
 	$scope.sendResponse =  function(){
 		if ($scope.data.length > 0){
-			server.sendResponse($scope.acceptInfo);
+			server.sendResponse();
 			$scope.data = [];
 		}
 	};
 
-	$scope.$on( 'Server.request', function( event, acceptInfo, request ) {
-		console.log(acceptInfo, request);
-		$scope.acceptInfo = acceptInfo;
+	$scope.$on( 'Server.request', function( event, request ) {
+		console.log(request);
 		$scope.data = request;
 		//registers the change in data
 		if(!$scope.$$phase) {

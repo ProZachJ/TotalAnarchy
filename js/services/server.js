@@ -12,12 +12,12 @@ App.factory('server', function($rootScope, socket){
   };
 
   var arrayBufferToString = function(buffer) {
-  var str = '';
-  var uArrayVal = new Uint8Array(buffer);
-  for(var s = 0; s < uArrayVal.length; s++) {
-    str += String.fromCharCode(uArrayVal[s]);
-  }
-  return str;
+    var str = '';
+    var uArrayVal = new Uint8Array(buffer);
+    for(var s = 0; s < uArrayVal.length; s++) {
+      str += String.fromCharCode(uArrayVal[s]);
+    }
+    return str;
   };
 
   var server = {
@@ -26,33 +26,31 @@ App.factory('server', function($rootScope, socket){
 
     acceptInfo: {},
 
-    sendResponse: function (acceptInfo){
-    var header = stringToUint8Array("HTTP/1.0 200 OK"+
+    sendResponse: function (){
+      var header = stringToUint8Array("HTTP/1.0 200 OK"+
           "\nContent-length:5 \nContent-type:text/html \n\ntest1");
-        var outputBuffer = new ArrayBuffer(header.byteLength);
-        var view = new Uint8Array(outputBuffer);
-        view.set(header, 0);
-        socket.write(acceptInfo.socketId, outputBuffer, function(writeInfo) {
-         console.log("WRITE", writeInfo);
-         socket.destroy(acceptInfo.socketId);
-         socket.accept(socketInfo.socketId, server.onAccept);
-        });
+      var outputBuffer = new ArrayBuffer(header.byteLength);
+      var view = new Uint8Array(outputBuffer);
+      view.set(header, 0);
+      socket.write(server.acceptInfo.socketId, outputBuffer, function(writeInfo) {
+        console.log("WRITE", writeInfo);
+        socket.destroy(server.acceptInfo.socketId);
+        socket.accept(socketInfo.socketId, server.onAccept);
+      });
     },
 
-    onAccept: function(acceptInfo) {
-      
-      console.log("ACCEPT", acceptInfo);
+    onAccept: function(_acceptInfo) {
+      server.acceptInfo = _acceptInfo;
+      console.log("ACCEPT", server.acceptInfo);
       //  Read in the data
-      socket.read(acceptInfo.socketId, function(readInfo) {
+      socket.read(server.acceptInfo.socketId, function(readInfo) {
         console.log("READ", readInfo);
         // Parse the request.
-        
         var request = arrayBufferToString(readInfo.data);
         console.log(request);
-        $rootScope.$broadcast( 'Server.request', acceptInfo, request );
+        $rootScope.$broadcast( 'Server.request', request );
         //parse data
-
-        //send response
+        //do more stuff
       });
     },
     
