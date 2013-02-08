@@ -7,10 +7,12 @@ App.controller('serverCtrl', ['$scope', 'socket', 'server', function($scope, soc
 	$scope.listen = function (){
 		if ($scope.serverstate === 'Not Listening'){
 			server.start();
+			//push state update from service after a check?
 			$scope.serverstate = 'Listening';
 		}
 		else if ($scope.serverstate === 'Listening'){
 			server.stop();
+			//push state update from service after a check?
 			$scope.serverstate = 'Not Listening';
 		}
 	};
