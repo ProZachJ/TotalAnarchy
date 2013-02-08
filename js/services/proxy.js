@@ -1,8 +1,8 @@
-App.factory('server', function($rootScope, socket){
+App.factory('proxy', function($rootScope, socket){
   'use strict';
   var socketInfo;
 
-  var server = {
+  var proxy = {
     
     data: [],
 
@@ -14,23 +14,23 @@ App.factory('server', function($rootScope, socket){
       var outputBuffer = new ArrayBuffer(header.byteLength);
       var view = new Uint8Array(outputBuffer);
       view.set(header, 0);
-      socket.write(server.acceptInfo.socketId, outputBuffer, function(writeInfo) {
+      socket.write(proxy.acceptInfo.socketId, outputBuffer, function(writeInfo) {
         console.log("WRITE", writeInfo);
-        socket.destroy(server.acceptInfo.socketId);
-        socket.accept(socketInfo.socketId, server.onAccept);
+        socket.destroy(proxy.acceptInfo.socketId);
+        socket.accept(socketInfo.socketId, proxy.onAccept);
       });
     },
 
     onAccept: function(_acceptInfo) {
-      server.acceptInfo = _acceptInfo;
-      console.log("ACCEPT", server.acceptInfo);
+      proxy.acceptInfo = _acceptInfo;
+      console.log("ACCEPT", proxy.acceptInfo);
       //  Read in the data
-      socket.read(server.acceptInfo.socketId, function(readInfo) {
+      socket.read(proxy.acceptInfo.socketId, function(readInfo) {
         console.log("READ", readInfo);
         // Parse the request.
         var request = $rootScope.arrayBufferToString(readInfo.data);
         console.log(request);
-        $rootScope.$broadcast( 'Server.request', request );
+        $rootScope.$broadcast( 'Proxy.request', request );
         //parse data
         //do more stuff
       });
@@ -41,7 +41,7 @@ App.factory('server', function($rootScope, socket){
         socketInfo = _socketInfo;
         socket.listen(socketInfo.socketId, '127.0.0.1', 8080, 20, function(result) {
           console.log("LISTENING:", result);
-          socket.accept(socketInfo.socketId, server.onAccept);
+          socket.accept(socketInfo.socketId, proxy.onAccept);
         });
       });
     },
@@ -51,5 +51,5 @@ App.factory('server', function($rootScope, socket){
       console.log("Stop");
     }
   };
-  return server;
+  return proxy;
 });

@@ -1,17 +1,17 @@
-App.controller('serverCtrl', ['$scope', 'socket', 'server', function($scope, socket, server){
+App.controller('proxyCtrl', ['$scope', 'socket', 'proxy', function($scope, socket, proxy){
 	'use strict';
 	$scope.serverstate = 'Not Listening';
-	$scope.data = server.data;
+	$scope.data = proxy.data;
 
 
 	$scope.listen = function (){
 		if ($scope.serverstate === 'Not Listening'){
-			server.start();
+			proxy.start();
 			//push state update from service after a check?
 			$scope.serverstate = 'Listening';
 		}
 		else if ($scope.serverstate === 'Listening'){
-			server.stop();
+			proxy.stop();
 			//push state update from service after a check?
 			$scope.serverstate = 'Not Listening';
 		}
@@ -19,12 +19,12 @@ App.controller('serverCtrl', ['$scope', 'socket', 'server', function($scope, soc
 
 	$scope.sendResponse =  function(){
 		if ($scope.data.length > 0){
-			server.sendResponse();
+			proxy.sendResponse();
 			$scope.data = [];
 		}
 	};
 
-	$scope.$on( 'Server.request', function( event, request ) {
+	$scope.$on( 'Proxy.request', function( event, request ) {
 		console.log(request);
 		$scope.data = request;
 		//registers the change in data

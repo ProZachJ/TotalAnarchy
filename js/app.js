@@ -22,5 +22,4 @@ App.run(['$rootScope',function($rootScope) {
     }
     return str;
   };
-
 }]);
