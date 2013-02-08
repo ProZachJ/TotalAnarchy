@@ -1,7 +1,6 @@
 App.factory('server', function($rootScope, socket){
     //need to add helper functions for dealing with responses etc maybe should be another service.
   var socketInfo;
-  $rootScope.data = [];
 
   var stringToUint8Array = function(string) {
     var buffer = new ArrayBuffer(string.length);
@@ -22,6 +21,10 @@ App.factory('server', function($rootScope, socket){
   };
 
   var server = {
+    
+    data: [],
+
+    acceptInfo: {},
 
     sendResponse: function (acceptInfo){
     var header = stringToUint8Array("HTTP/1.0 200 OK"+
@@ -32,16 +35,12 @@ App.factory('server', function($rootScope, socket){
         socket.write(acceptInfo.socketId, outputBuffer, function(writeInfo) {
          console.log("WRITE", writeInfo);
          socket.destroy(acceptInfo.socketId);
-         $rootScope.data = [];
-         if(!$rootScope.$$phase) { //this is used to prevent an overlap of scope digestion
-          $rootScope.$apply(); //this will kickstart angular to recognize the change
-        }
          socket.accept(socketInfo.socketId, server.onAccept);
         });
     },
 
     onAccept: function(acceptInfo) {
-      $rootScope.acceptInfo = acceptInfo;
+      
       console.log("ACCEPT", acceptInfo);
       //  Read in the data
       socket.read(acceptInfo.socketId, function(readInfo) {
@@ -49,14 +48,9 @@ App.factory('server', function($rootScope, socket){
         // Parse the request.
         
         var request = arrayBufferToString(readInfo.data);
-        $rootScope.data = request;
+        console.log(request);
+        $rootScope.$broadcast( 'Server.request', acceptInfo, request );
         //parse data
-        console.log($rootScope.data);
-        
-        if(!$rootScope.$$phase) { //this is used to prevent an overlap of scope digestion
-          $rootScope.$apply(); //this will kickstart angular to recognize the change
-        }
-        
 
         //send response
       });
