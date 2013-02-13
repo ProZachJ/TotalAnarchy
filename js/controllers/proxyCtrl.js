@@ -1,4 +1,4 @@
-App.controller('proxyCtrl', ['$scope', 'socket', 'proxy', function($scope, socket, proxy){
+App.controller('proxyCtrl', ['$scope', 'proxy', function($scope, proxy){
 	'use strict';
 	$scope.serverstate = 'Not Listening';
 	$scope.data = proxy.data;
@@ -25,7 +25,6 @@ App.controller('proxyCtrl', ['$scope', 'socket', 'proxy', function($scope, socke
 	};
 
 	$scope.$on( 'Proxy.request', function( event, request ) {
-		console.log(request);
 		$scope.data = request;
 		//registers the change in data
 		if(!$scope.$$phase) {
