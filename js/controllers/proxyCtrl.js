@@ -19,13 +19,20 @@ App.controller('proxyCtrl', ['$scope', 'proxy', function($scope, proxy){
 
 	$scope.submitRequest =  function (){
 		if ($scope.data.length > 0){
-			proxy.sendResponse();
+			proxy.getResponse();
 			$scope.data = [];
 		}
 	};
 
 	$scope.$on( 'Proxy.request', function( event, request ) {
-		$scope.data = request;
+		$scope.data = request.split("\n");
+		//registers the change in data
+		if(!$scope.$$phase) {
+			$scope.$apply();
+		}
+	});
+	$scope.$on( 'Proxy.response', function( event, response ) {
+		$scope.data = response.split("\n");
 		//registers the change in data
 		if(!$scope.$$phase) {
 			$scope.$apply();

@@ -9,6 +9,7 @@
   	<script src="js/angular-strap/dist/angular-strap.js"></script>
  	<script src="js/app.js"></script>
  	<script src="js/services/proxy.js"></script>
+ 	<script src="js/services/proxyparser.js"></script>
  	<script src="js/controllers/proxyCtrl.js"></script>
 	<title>Total Anarchy Intercept Proxy</title>
 	<base target="_blank">
@@ -24,7 +25,7 @@
 	      <li data-match-route="/Intruder"><a href="#/Intruder">Intruder</a></li>
 	    </ul>
 	  </div>
-	  <div ng-click="submitRequest()">{{data}}</div>
+	  <div ng-click="submitRequest()"><div data-ng-repeat="line in data">{{line}}</div></div>
 	</div>	
   </body>
 </html>

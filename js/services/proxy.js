@@ -1,12 +1,34 @@
-App.factory('proxy', function($rootScope, socket){
+App.factory('proxy', ['$rootScope', 'socket', 'proxyparser', function($rootScope, socket, proxyparser){
   'use strict';
   var socketInfo;
 
   var proxy = {
     
-    data: [],
+    req: {},
+    resp: {},
 
     acceptInfo: {},
+
+    getResponse: function(){
+      socket.create("tcp", {}, function(createInfo){
+        var socketId = createInfo.socketId;
+        console.log(proxy.req.host);
+        socket.connect(socketId, proxy.req.host, 80, function(result){
+          var reqdata = $rootScope.stringToUint8Array(proxy.req.str);
+          var outputBuffer = new ArrayBuffer(reqdata.byteLength);
+          var view = new Uint8Array(outputBuffer);
+          view.set(reqdata, 0);
+          socket.write(createInfo.socketId, outputBuffer, function(writeInfo){
+            socket.read(createInfo.socketId, function(readInfo){
+              var response = $rootScope.arrayBufferToString(readInfo.data);
+              proxy.resp = proxyparser.parseResponse(response);
+              console.log(response);
+              $rootScope.$broadcast( 'Proxy.response', response );
+            });
+          });
+        });
+      });
+    },
 
     sendResponse: function (){
       var header = $rootScope.stringToUint8Array("HTTP/1.0 200 OK"+
@@ -25,9 +47,10 @@ App.factory('proxy', function($rootScope, socket){
       //  Read in the data
       socket.read(proxy.acceptInfo.socketId, function(readInfo) {
         // Parse the request.
-        var request = $rootScope.arrayBufferToString(readInfo.data);
-        $rootScope.$broadcast( 'Proxy.request', request );
-        //parse data
+        var reqstr = $rootScope.arrayBufferToString(readInfo.data);
+        proxy.req = proxyparser.parseRequest(reqstr);
+        //parse request into object
+        $rootScope.$broadcast( 'Proxy.request', reqstr );
         //do more stuff
       });
     },
@@ -46,4 +69,4 @@ App.factory('proxy', function($rootScope, socket){
     }
   };
   return proxy;
-});
+}]);
