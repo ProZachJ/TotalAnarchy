@@ -6,13 +6,12 @@ App.factory('proxy', ['$rootScope', 'socket', 'proxyparser', function($rootScope
     
     req: {},
     resp: {},
-
+    respdata: [],
     acceptInfo: {},
 
     getResponse: function(){
       socket.create("tcp", {}, function(createInfo){
         var socketId = createInfo.socketId;
-        console.log(proxy.req.host);
         socket.connect(socketId, proxy.req.host, 80, function(result){
           var reqdata = $rootScope.stringToUint8Array(proxy.req.str);
           var outputBuffer = new ArrayBuffer(reqdata.byteLength);
@@ -20,6 +19,7 @@ App.factory('proxy', ['$rootScope', 'socket', 'proxyparser', function($rootScope
           view.set(reqdata, 0);
           socket.write(createInfo.socketId, outputBuffer, function(writeInfo){
             socket.read(createInfo.socketId, function(readInfo){
+              proxy.respdata = readInfo.data;
               var response = $rootScope.arrayBufferToString(readInfo.data);
               proxy.resp = proxyparser.parseResponse(response);
               console.log(response);
@@ -31,9 +31,8 @@ App.factory('proxy', ['$rootScope', 'socket', 'proxyparser', function($rootScope
     },
 
     sendResponse: function (){
-      var header = $rootScope.stringToUint8Array("HTTP/1.0 200 OK"+
-          "\nContent-length:5 \nContent-type:text/html \n\ntest1");
-      var outputBuffer = new ArrayBuffer(header.byteLength);
+      var header = proxy.respdata;
+      var outputBuffer = proxy.respdata;
       var view = new Uint8Array(outputBuffer);
       view.set(header, 0);
       socket.write(proxy.acceptInfo.socketId, outputBuffer, function(writeInfo) {
