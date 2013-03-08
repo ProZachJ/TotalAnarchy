@@ -13,7 +13,6 @@ App.factory('proxyparser', function($rootScope){
 						'host': realhost
 						//needs a .toString method
 				};
-				console.log(reqobj.host);
 				return reqobj;				
 		},
 

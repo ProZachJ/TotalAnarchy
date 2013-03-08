@@ -24,14 +24,15 @@ App.controller('proxyCtrl', ['$scope', 'proxy', function($scope, proxy){
 		if(!$scope.$$phase) {
 			$scope.$apply();
 		}
-		$scope.submitRequest =  function (){
-		if ($scope.data.length > 0){
-			proxy.getResponse();
-			$scope.data = [];
-		}
-	};
+        $scope.submitRequest =  function (){
+            if ($scope.data.length > 0){
+                proxy.getResponse();
+                $scope.data = [];
+            }
+	    };
 	});
-	$scope.$on( 'Proxy.response', function( event, response ) {
+
+    $scope.$on( 'Proxy.response', function( event, response ) {
 		$scope.data = response.split("\n");
 		//registers the change in data
 		if(!$scope.$$phase) {
