@@ -9,6 +9,19 @@ App.factory('proxy', ['$rootScope', 'socket', 'proxyparser', function($rootScope
     respdata: [],
     acceptInfo: {},
 
+    start: function() {
+      socket.create("tcp", {}, function(_socketInfo) {
+          socketInfo = _socketInfo;
+          socket.listen(socketInfo.socketId, '127.0.0.1', 8080, 20, function(result) {
+              socket.accept(socketInfo.socketId, proxy.onAccept);
+          });
+      });
+    },
+
+    stop: function() {
+      socket.destroy(socketInfo.socketId);
+    },
+
     getResponse: function(){
       socket.create("tcp", {}, function(createInfo){
         var socketId = createInfo.socketId;
@@ -52,19 +65,6 @@ App.factory('proxy', ['$rootScope', 'socket', 'proxyparser', function($rootScope
         $rootScope.$broadcast( 'Proxy.request', reqstr );
         //do more stuff
       });
-    },
-    
-    start: function() {
-      socket.create("tcp", {}, function(_socketInfo) {
-        socketInfo = _socketInfo;
-        socket.listen(socketInfo.socketId, '127.0.0.1', 8080, 20, function(result) {
-          socket.accept(socketInfo.socketId, proxy.onAccept);
-        });
-      });
-    },
-
-    stop: function() {
-      socket.destroy(socketInfo.socketId);
     }
   };
   return proxy;
