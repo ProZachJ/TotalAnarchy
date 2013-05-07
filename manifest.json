@@ -1,7 +1,7 @@
 {
   "name": "Total Anarchy Intercept Proxy",
 
-  "description": "An Intercept proxy packaged application powered by Node",
+  "description": "An Intercept proxy packaged application powered by AngularJS and Chrome APIs",
 
   "version": "0.1",
 
