@@ -17,9 +17,7 @@ App.run(['$rootScope',function($rootScope) {
   $rootScope.arrayBufferToString = function(buffer) {
     var str = '';
     var uArrayVal = new Uint8Array(buffer);
-    for(var s = 0; s < uArrayVal.length; s++) {
-      str += String.fromCharCode(uArrayVal[s]);
-    }
+    str = new TextDecoder('UTF-8').decode(uArrayVal);
     return str;
   };
 }]);
